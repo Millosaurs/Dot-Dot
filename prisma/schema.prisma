@@ -2,13 +2,14 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-    output   = "../node_modules/.prisma/client"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -17,5 +18,15 @@ model User {
     firstName String
     lastName String
     imgUrl String?
-    
+    accounts Account[]
+}
+
+model Account {
+    id String @id @default(cuid())
+    userId String
+    accessToken String @unique
+    emailAddress String
+    name String
+    nextDeltaToken String?
+    user User @relation(fields: [userId], references: [id])
 }
